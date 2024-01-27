@@ -4,6 +4,7 @@ from RPA.HTTP import HTTP
 from RPA.Tables import Tables
 from RPA.PDF import PDF
 from RPA.Archive import Archive
+from RPA.Assistant import Assistant
 
 @task
 def order_robots_from_RobotSpareBin():
@@ -14,13 +15,24 @@ def order_robots_from_RobotSpareBin():
     Embeds the screenshot of the robot to the PDF receipt.
     Creates ZIP archive of the receipts and the images.
     """
-    open_the_intranet_website()
+    #open_the_intranet_website()
+    user_input_task()
     download_csv()
     process_all_orders()
     archive_receipts()
 
-def open_the_intranet_website():
-    browser.goto("https://robotsparebinindustries.com/#/robot-order")
+def user_input_task():
+    assistant = Assistant()
+    assistant.add_heading("Input from user")
+    assistant.add_text_input("text_input", placeholder="Please enter URL")
+    assistant.add_submit_buttons("Submit", default="Submit")
+    result = assistant.run_dialog()
+    url = result.text_input
+    # https://robotsparebinindustries.com/#/robot-order
+    open_the_intranet_website(url)
+
+def open_the_intranet_website(url):
+    browser.goto(url)
     page = browser.page()
     page.set_viewport_size({"width": 1920, "height": 1080})
 
